@@ -4,84 +4,112 @@ import (
 	"fmt"
 	"library_management/models"
 	"library_management/services"
-	"os"
-	"strconv"
-	"strings"
 )
 
-func ShowMenu() {
-	fmt.Println("Library Management System")
-	fmt.Println("1. Add Book")
-	fmt.Println("2. Remove Book")
-	fmt.Println("3. Reserve Book")
-	fmt.Println("4. Borrow Book")
-	fmt.Println("5. Return Book")
-	fmt.Println("6. List Available Books")
-	fmt.Println("7. List Borrowed Books")
-	fmt.Println("8. Exit")
+type LibraryController struct {
+	library *services.Library
 }
 
-func ReadInput(prompt string) string {
-	fmt.Print(prompt)
-	var input string
-	fmt.Scanln(&input)
-	return strings.TrimSpace(input)
+func NewLibraryController(library *services.Library) *LibraryController {
+	return &LibraryController{library: library}
 }
 
-func HandleLibraryActions() {
-	library := services.NewLibrary()
-
+func (lc *LibraryController) Run() {
 	for {
-		ShowMenu()
-		action := ReadInput("Choose an action (1-8): ")
+		fmt.Println("\nLibrary Management System")
+		fmt.Println("1. Add Book")
+		fmt.Println("2. Remove Book")
+		fmt.Println("3. Borrow Book")
+		fmt.Println("4. Return Book")
+		fmt.Println("5. Reserve Book")
+		fmt.Println("6. List Available Books")
+		fmt.Println("7. List Borrowed Books")
+		fmt.Println("8. Exit")
+		fmt.Print("Enter choice: ")
 
-		switch action {
-		case "1":
-			title := ReadInput("Enter book title: ")
-			author := ReadInput("Enter author: ")
-			library.AddBook(models.Book{Title: title, Author: author, Status: "Available"})
-		case "2":
-			bookID, _ := strconv.Atoi(ReadInput("Enter book ID to remove: "))
-			library.RemoveBook(bookID)
-		case "3":
-			bookID, _ := strconv.Atoi(ReadInput("Enter book ID to reserve: "))
-			memberID, _ := strconv.Atoi(ReadInput("Enter member ID: "))
-			err := library.ReserveBook(bookID, memberID)
+		var choice int
+		fmt.Scan(&choice)
+
+		switch choice {
+		case 1:
+			var id int
+			var title, author string
+			fmt.Print("Enter Book ID: ")
+			fmt.Scan(&id)
+			fmt.Print("Enter Book Title: ")
+			fmt.Scan(&title)
+			fmt.Print("Enter Book Author: ")
+			fmt.Scan(&author)
+			lc.library.AddBook(models.Book{ID: id, Title: title, Author: author})
+			fmt.Println("Book added successfully!")
+
+		case 2:
+			var bookID int
+			fmt.Print("Enter Book ID to remove: ")
+			fmt.Scan(&bookID)
+			lc.library.RemoveBook(bookID)
+			fmt.Println("Book removed successfully!")
+
+		case 3:
+			var bookID, memberID int
+			fmt.Print("Enter Book ID to borrow: ")
+			fmt.Scan(&bookID)
+			fmt.Print("Enter Member ID: ")
+			fmt.Scan(&memberID)
+			err := lc.library.BorrowBook(bookID, memberID)
 			if err != nil {
 				fmt.Println("Error:", err)
+			} else {
+				fmt.Println("Book borrowed successfully!")
 			}
-		case "4":
-			bookID, _ := strconv.Atoi(ReadInput("Enter book ID to borrow: "))
-			memberID, _ := strconv.Atoi(ReadInput("Enter member ID: "))
-			err := library.BorrowBook(bookID, memberID)
+
+		case 4:
+			var bookID, memberID int
+			fmt.Print("Enter Book ID to return: ")
+			fmt.Scan(&bookID)
+			fmt.Print("Enter Member ID: ")
+			fmt.Scan(&memberID)
+			err := lc.library.ReturnBook(bookID, memberID)
 			if err != nil {
 				fmt.Println("Error:", err)
+			} else {
+				fmt.Println("Book returned successfully!")
 			}
-		case "5":
-			bookID, _ := strconv.Atoi(ReadInput("Enter book ID to return: "))
-			memberID, _ := strconv.Atoi(ReadInput("Enter member ID: "))
-			err := library.ReturnBook(bookID, memberID)
+
+		case 5:
+			var bookID, memberID int
+			fmt.Print("Enter Book ID to reserve: ")
+			fmt.Scan(&bookID)
+			fmt.Print("Enter Member ID: ")
+			fmt.Scan(&memberID)
+			err := lc.library.ReserveBook(bookID, memberID)
 			if err != nil {
 				fmt.Println("Error:", err)
+			} else {
+				fmt.Println("Book reserved successfully!")
 			}
-		case "6":
-			books := library.ListAvailableBooks()
+
+		case 6:
 			fmt.Println("Available Books:")
-			for _, book := range books {
-				fmt.Printf("%d. %s by %s\n", book.ID, book.Title, book.Author)
+			for _, book := range lc.library.ListAvailableBooks() {
+				fmt.Printf("ID: %d, Title: %s, Author: %s\n", book.ID, book.Title, book.Author)
 			}
-		case "7":
-			memberID, _ := strconv.Atoi(ReadInput("Enter member ID to list borrowed books: "))
-			books := library.ListBorrowedBooks(memberID)
+
+		case 7:
+			var memberID int
+			fmt.Print("Enter Member ID: ")
+			fmt.Scan(&memberID)
 			fmt.Println("Borrowed Books:")
-			for _, book := range books {
-				fmt.Printf("%d. %s by %s\n", book.ID, book.Title, book.Author)
+			for _, book := range lc.library.ListBorrowedBooks(memberID) {
+				fmt.Printf("ID: %d, Title: %s, Author: %s\n", book.ID, book.Title, book.Author)
 			}
-		case "8":
+
+		case 8:
 			fmt.Println("Exiting...")
-			os.Exit(0)
+			return
+
 		default:
-			fmt.Println("Invalid option, please try again.")
+			fmt.Println("Invalid choice! Please try again.")
 		}
 	}
 }
