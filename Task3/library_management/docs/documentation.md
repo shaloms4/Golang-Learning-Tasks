@@ -1,4 +1,4 @@
-# Library Management System Documentation
+# Library Management System
 
 ## Overview
 The **Console-Based Library Management System** is a simple Go application that allows users to manage a library through a command-line interface. It provides functionalities for adding, removing, borrowing, and returning books, as well as listing available and borrowed books.
