@@ -35,6 +35,12 @@ func AddTask(c *gin.Context) {
 		return
 	}
 
+	// Validate fields (title, description, status, and due_date)
+	if newTask.Title == "" || newTask.Description == "" || newTask.Status == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Title, Description, and Status cannot be empty"})
+		return
+	}
+
 	service.AddTask(newTask)
 	c.JSON(http.StatusCreated, gin.H{"message": "Task created"})
 }
