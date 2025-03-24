@@ -29,7 +29,7 @@ GET /tasks
         "id": "1",
         "title": "Task 1",
         "description": "First task",
-        "due_date": "2025-03-25",
+        "due_date": "2025-03-25T00:00:00Z",
         "status": "Pending"
     }
 ]
@@ -46,7 +46,7 @@ GET /tasks/{id}
     "id": "1",
     "title": "Task 1",
     "description": "First task",
-    "due_date": "2025-03-25",
+    "due_date": "2025-03-25T00:00:00Z",
     "status": "Pending"
 }
 ```
@@ -68,7 +68,7 @@ POST /tasks
     "id": "2",
     "title": "New Task",
     "description": "This is a new task",
-    "due_date": "2025-03-30",
+    "due_date": "2025-03-25T00:00:00Z",
     "status": "Not started"
 }
 ```
@@ -89,7 +89,7 @@ PUT /tasks/{id}
 {
     "title": "Updated Task Title",
     "description": "Updated description",
-    "due_date": "2025-04-01",
+    "due_date": "2025-03-25T00:00:00Z",
     "status": "In Progress"
 }
 ```
@@ -101,7 +101,7 @@ PUT /tasks/{id}
         "id": "1",
         "title": "Updated Task Title",
         "description": "Updated description",
-        "due_date": "2025-04-01",
+        "due_date": "2025-03-25T00:00:00Z",
         "status": "In Progress"
     }
 }
