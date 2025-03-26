@@ -78,6 +78,20 @@ You can now use Postman (or any API testing tool) to interact with the API.
 
 ---
 
+## Authentication
+
+To perform tasks like creating, updating, or deleting tasks, you must include a **JWT token** in the `Authorization` header.
+
+1. **Login** to receive a token:
+   - POST to `/login` with your username and password.
+   - The response will contain a JWT token in the `token` field.
+
+2. **Authorization Header**:
+   - Include the token in the `Authorization` header in subsequent requests.
+   - Format: `Authorization: Bearer <token>`
+
+---
+
 ## Endpoints
 
 ### 1. **Get All Tasks**
@@ -94,6 +108,7 @@ You can now use Postman (or any API testing tool) to interact with the API.
         }
     ]
     ```
+- **Authorization**: Open to both **Admin** and **User** roles. Both can retrieve tasks.
 
 ### 2. **Get Task by ID**
 - **Endpoint**: `GET /tasks/:id`
@@ -108,10 +123,13 @@ You can now use Postman (or any API testing tool) to interact with the API.
     }
     ```
 - **Error**: `404 Task not found`
+- **Authorization**: Open to both **Admin** and **User** roles. Both can retrieve tasks by ID.
 
 ### 3. **Add New Task**
 - **Endpoint**: `POST /tasks`
 - **Request**:
+    - **Headers**:
+      - `Authorization: Bearer <your_token>`
     ```json
     {
         "title": "Task 1",
@@ -127,13 +145,17 @@ You can now use Postman (or any API testing tool) to interact with the API.
         "task_id": "ObjectId"
     }
     ```
+- **Authorization**: **Admin** role required to create tasks.
 
 ### 4. **Update Task**
 - **Endpoint**: `PUT /tasks/:id`
 - **Request**:
+    - **Headers**:
+      - `Authorization: Bearer <your_token>`
     ```json
     {
-        "title": "Updated Task Title"
+        "title": "Updated Task Title",
+        "status": "in progress"
     }
     ```
 - **Response**:
@@ -143,11 +165,12 @@ You can now use Postman (or any API testing tool) to interact with the API.
         "task": {
             "_id": "ObjectId",
             "title": "Updated Task Title",
-            "status": "not started"
+            "status": "in progress"
         }
     }
     ```
 - **Error**: `404 Task not found`
+- **Authorization**: **Admin** role required to update tasks.
 
 ### 5. **Delete Task**
 - **Endpoint**: `DELETE /tasks/:id`
@@ -158,6 +181,22 @@ You can now use Postman (or any API testing tool) to interact with the API.
     }
     ```
 - **Error**: `404 Task not found`
+- **Authorization**: **Admin** role required to delete tasks.
+
+### 6. **Promote User to Admin**
+- **Endpoint**: `POST /promote/:username`
+- **Request**:
+    - **Headers**:
+      - `Authorization: Bearer <your_token>`
+    - **Body**: None
+- **Response**:
+    ```json
+    {
+        "message": "User promoted to admin"
+    }
+    ```
+- **Error**: `404 User not found`
+- **Authorization**: **Admin** role required to promote users.
 
 ---
 
@@ -181,7 +220,7 @@ You can now use Postman (or any API testing tool) to interact with the API.
     ```json
     { "error": "Title is required" }
     ```
-  
+
 - **404 Not Found**: Resource not found.
     ```json
     { "error": "Task not found" }
@@ -192,8 +231,30 @@ You can now use Postman (or any API testing tool) to interact with the API.
     { "error": "Something went wrong" }
     ```
 
+---
+
+## Authentication & Authorization Rules
+
+1. **Admin Role**:
+   - The first user to register is automatically assigned the **Admin** role.
+   - **Admins** can create, update, delete tasks, and promote other users to **Admin**.
+   
+2. **User Role**:
+   - A **User** can access the endpoints to retrieve all tasks and specific tasks by their ID.
+   - **Users** cannot create, update, or delete tasks.
+
+3. **Task Ownership**:
+   - Tasks can be created by **Admins** only.
+   - Only **Admins** and the **User** who created a task can update or delete that task.
+  
+---
+
 ### Resources
 
 - [MongoDB Documentation](https://www.mongodb.com/docs/)
 - [MongoDB Atlas Setup](https://www.mongodb.com/cloud/atlas)
 - [MongoDB Go Driver](https://pkg.go.dev/go.mongodb.org/mongo-driver)
+
+---
+
+This documentation now includes the rule that **admins** can promote other users to admin and can create, update, and delete tasks, while **users** can only retrieve tasks.
