@@ -46,7 +46,7 @@ git clone https://github.com/shaloms4/Golang-Learning-Tasks
 Navigate to the project directory and install the necessary dependencies.
 
 ```bash
-cd Golang-Learning-Tasks/task_5
+cd Golang-Learning-Tasks/task_6
 go mod tidy
 ```
 
