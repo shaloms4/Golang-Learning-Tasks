@@ -16,10 +16,6 @@ import (
 
 var userCollection *mongo.Collection
 
-func InitializeUserCollection(db *mongo.Database) {
-	userCollection = db.Collection("users")
-}
-
 // Hash password
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

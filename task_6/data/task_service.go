@@ -38,7 +38,10 @@ func InitializeMongoDB() {
 		log.Fatal("MongoDB connection failed:", err)
 	}
 
-	taskCollection = client.Database("taskmanager").Collection("tasks")
+	// Initialize both task and user collections
+	db := client.Database("taskmanager")
+	taskCollection = db.Collection("tasks")
+	userCollection = db.Collection("users") 
 
 	log.Println("Connected to MongoDB!")
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/shaloms4/Golang-Learning-Tasks/task_manager/middleware"
 )
 
-// InitializeRoutes initializes the routes for the Task API.
 func InitializeRoutes() {
 	router := gin.Default()
 
@@ -32,6 +31,6 @@ func InitializeRoutes() {
 	// Admin privilege management
 	admin.POST("/promote/:username", controller.PromoteUser)
 
-	// Start the server on port 8080
-	router.Run(":8080")
+	// Start the server
+	router.Run()
 }
