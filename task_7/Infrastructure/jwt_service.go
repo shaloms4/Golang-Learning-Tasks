@@ -1,6 +1,7 @@
 package Infrastructure
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -31,6 +32,9 @@ func (s *jwtService) GenerateToken(userID string, role string) (string, error) {
 
 func (s *jwtService) ValidateToken(tokenString string) (map[string]interface{}, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte(s.secretKey), nil
 	})
 
@@ -42,5 +46,5 @@ func (s *jwtService) ValidateToken(tokenString string) (map[string]interface{}, 
 		return claims, nil
 	}
 
-	return nil, jwt.ErrInvalidKey
+	return nil, fmt.Errorf("invalid token")
 }
