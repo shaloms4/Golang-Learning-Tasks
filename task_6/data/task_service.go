@@ -41,7 +41,7 @@ func InitializeMongoDB() {
 	// Initialize both task and user collections
 	db := client.Database("taskmanager")
 	taskCollection = db.Collection("tasks")
-	userCollection = db.Collection("users") 
+	userCollection = db.Collection("users")
 
 	log.Println("Connected to MongoDB!")
 }
