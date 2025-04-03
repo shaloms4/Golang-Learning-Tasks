@@ -1,0 +1,65 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Run tests with coverage
+        run: |
+          cd task_8/task_manager
+          go test ./... -v -coverprofile=coverage.out
+          go tool cover -func=coverage.out
+        env:
+          MONGODB_URL: mongodb://localhost:27017
+          DB_NAME: task_manager_test
+          JWT_SECRET: test-secret-key
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
+        with:
+          file: task_8/task_manager/coverage.out
+          fail_ci_if_error: true
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+      - name: Run golangci-lint
+        run: |
+          cd task_8/task_manager
+          golangci-lint run ./... 
